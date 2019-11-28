@@ -1,0 +1,213 @@
+
+	<!DOCTYPE html>
+	<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<!-- app样式 -->
+		<link rel="stylesheet" href="css/app.css">
+		<!--elementUI样式-->
+		<link rel="stylesheet" href="js/lib2.4.1/index.css">
+		<!-- 先引入 Vue -->
+		<script src="js/lib2.4.1/vue.js"></script>
+		<!-- jquery -->
+		<script src="js/bootstrap/js/jquery.mini.js"></script>
+		<script src="js/app.js"></script>
+		<!-- 引入elementUI组件库 -->
+		<script src="js/lib2.4.1/index.js"></script>
+		<title>动态反向代理配置</title>
+	</head>
+	<style type="text/css">
+		.el-tree-node__label {
+			font-size: 12px;
+		}
+	</style>
+
+	<body>
+		<div id="app">
+			<div class="app_title">
+				<div class="app_title_show" Style="float:left;">负载均衡</div>
+				<div style="float:right;margin-right:30px;">
+					<el-button type="text" @click="exit">退出</el-button>
+				</div>
+			</div>
+			<div class="app_line"></div>
+
+			<div    v-loading.fullscreen.lock="loading">
+				<div style="height:40px;line-height:40px;margin-left:20px;margin-right:20px;">
+					<el-button type="primary" size="small" @click="add">添加server</el-button>
+					<el-button type="primary" size="small" @click="refresh">刷新</el-button>
+				</div>
+				<div class="app_context">
+					<el-table :data="tableData" style="width: 100%">
+						<el-table-column     prop="serverName"   width="250"  label="serverName"></el-table-column>
+						<el-table-column     prop="host"    label="host" ></el-table-column>
+						<el-table-column     prop="weight"    label="权重" width="120" align="center"></el-table-column>
+						<el-table-column     prop="health"    label="健康状态" width="120" align="center">
+							<template  slot-scope="scope">
+								<i class="el-icon-error" v-if="scope.row.health=='N'" style="color:#FF0000"></i>
+								<i class="el-icon-success" v-if="scope.row.health=='Y'" style="color:rgb(19, 206, 102)"></i>
+							</template>
+						</el-table-column>
+						<el-table-column     prop="state"    label="加入/移除"  width="120"  align="center">
+							<template  slot-scope="scope">
+								<el-switch  v-model="scope.row.state"  active-color="#13ce66"   :disabled="scope.row.health=='N' && scope.row.state=='off'"
+								inactive-color="#ff4949" active-value="on" inactive-value="off" @change="onChange(scope.row.serverName,scope.row.host,scope.row.state,scope.row.weight,scope.row.health)">
+		  						</el-switch>
+		  					</template>
+						</el-table-column>
+						<el-table-column   label="操作"  width="200" align="center">
+							<template  slot-scope="scope">
+								<el-button type="primary" size="small" @click="onEdit(scope.row.serverName,scope.row.host,scope.row.weight)" >修改</el-button>
+								<el-button type="danger" size="small" @click="onDelete(scope.row.serverName,scope.row.host)" >删除</el-button>
+							</template>
+						</el-table-column>
+					</el-table>
+				</div>
+				<el-dialog title="服务器" :visible.sync="dialogFormVisible">
+				  <el-form :model="form" label-width="120px" :rules="rules" ref="ruleForm">
+				    <el-form-item label="server名称：" prop="serverName">
+				      <el-input v-model="form.serverName" autocomplete="off" placeholder="server名称"></el-input>
+				    </el-form-item>
+				    <el-form-item label="host："  prop="host">
+				      <el-input v-model="form.host" autocomplete="off" placeholder="ip:port" :disabled="form.op=='edit'"></el-input>
+				    </el-form-item>
+				    <el-form-item label="权重："  prop="weight">
+				      <el-input v-model="form.weight" autocomplete="off" placeholder="10"></el-input>
+				    </el-form-item>
+				  </el-form>
+				  <div slot="footer" class="dialog-footer">
+				    <el-button @click="dialogFormVisible = false">取 消</el-button>
+				    <el-button type="primary" @click="save">确 定</el-button>
+				  </div>
+				</el-dialog>
+			</div>
+			
+
+			
+
+		</div>
+	</body>
+	<script type="text/javascript">
+		var timer;
+		var vm = new Vue({
+			data: {
+				loading: false,
+				tableData:[],
+				dialogFormVisible: false,
+				form: {
+					serverName: "",
+					host: "",
+					weight: 10,
+					op: "add"
+				},
+				rules: {
+					"serverName":[
+						{required: true, message: '请填写server名称', trigger: 'blur'}
+					],
+					"host": [
+						{required: true, message: '请填写host', trigger: 'blur'}
+					]
+				}
+			},
+			el: '#app',
+			methods: {
+				refresh: function(){
+					var _self = this;
+					getData('api_getUpstreams', null, _self, function (response) {
+						_self.tableData = response;
+					});
+				},
+				add: function(){
+					var _self = this;
+					_self.form.serverName="";
+					_self.form.host="";
+					_self.form.op="add";
+					_self.form.weight="10";
+					_self.dialogFormVisible = true;
+
+				},
+				save: function(){
+					var _self = this;
+					_self.$refs["ruleForm"].validate(function(valid){
+						if (valid){
+
+							postData("api_addUps",_self.form,_self,function(response){
+								if(response.state=="success"){
+									_self.refresh();
+									_self.dialogFormVisible = false;
+								}else{
+									_self.$message.error(response.message);
+								}
+							});
+						}else{
+							return false;
+						}
+					});
+				},
+				onChange: function(serverName,host,state,weight,health){
+					var _self = this;
+					if (health=='N' && state=='on'){
+						_self.$message.error("服务器未启动");
+						return false;
+					}
+					var data = {
+						serverName: serverName,
+						host: host,
+						state: state,
+						weight: weight
+					}
+
+					getData("api_stop",data,_self,function(response){
+						if(response.state=="fail"){
+							_self.$message.error(response.message);
+						}
+					})
+				},
+				onDelete: function(serverName,host){
+					var _self = this;
+					var data = {
+						serverName: serverName,
+						host: host
+					}
+					_self.$confirm("确定要删除该server吗？","提示",{
+						          confirmButtonText: '确定',
+						          cancelButtonText: '取消',
+						          type: 'warning'}).then(function(){
+
+						          		getData("api_delete",data,_self,function(response){
+						          			if(response.state=="success"){
+						          				_self.refresh();
+						          			}else{
+						          				_self.$message.error(response.message);
+						          			}
+						          		})
+						          });
+				},
+				onEdit: function(serverName,host,weight){
+					var _self = this;
+					_self.form.serverName = serverName;
+					_self.form.host = host;
+					_self.form.weight =weight;
+					_self.form.op="edit";
+					_self.dialogFormVisible=true;
+
+				},
+				exit: function(){
+					var _self = this;
+					getData("api_exit",null,_self,function(response){
+						document.location="login.html"
+					})
+				}
+
+			},
+			created: function () {
+				var _self = this;
+				//参数类型
+				_self.refresh();
+
+				//timer= setInterval(_self.refresh,1000*5);
+			}
+		});
+	</script>
+
+	</html>
