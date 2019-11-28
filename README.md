@@ -15,7 +15,7 @@ openresty动态负载均衡
    
 2.运行
 
-    linux下执行：nginx -c nginx.conf   
+    linux下执行：nginx -c conf/nginx.conf   
     windows下执行：  start nginx
    
 3.配置
