@@ -7,25 +7,26 @@ openresty动态负载均衡
 
 1.安装
 
-   请先安装openresty，版本选择1.15以上版本。
-   复制lua目录到openresty根目录下。
-   复制/conf/nginx.conf文件 /conf/proxy_new.json文件到 openresty根目录下的conf目录，覆盖nginx.conf文件。
+    请先安装openresty，版本选择1.15以上版本。
+    复制html目录到openresty根目录下。
+    复制lua目录到openresty根目录下。
+    复制/conf/nginx.conf文件 /conf/proxy_new.json文件到 openresty根目录下的conf目录，覆盖nginx.conf文件。
    <img src="02.png" style="width:400px;"/>
    
 2.运行
 
-   linux下执行：nginx -c nginx.conf
-   windows下执行：  start nginx
+    linux下执行：nginx -c conf/nginx.conf   
+    windows下执行：  start nginx
    
 3.配置
 
-   修改登录密码， 修改文件/lua/password.lua
-   --默认密码
-   local defaultPassword = "admin"
+    修改登录密码， 修改文件/lua/password.lua   
+    --默认密码   
+    local defaultPassword = "admin"
    
 4.其它
 
-    管理端口为8000,进入管理界面: http://localhost:8000/
+    管理端口为8000,进入管理界面: http://localhost:8000/.登录密码默认admin.
     负载均衡对外端口为80，可修改nginx.conf来配置这个端口
     增加server或者删除server，负载均衡会自动生效。
     
