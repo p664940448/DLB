@@ -10,15 +10,18 @@ openresty动态负载均衡
    请先安装openresty，版本选择1.15以上版本。
    复制lua目录到openresty根目录下。
    复制/conf/nginx.conf文件 /conf/proxy_new.json文件到 openresty根目录下的conf目录，覆盖nginx.conf文件。
+   
 2.运行
 
    linux下执行：nginx -c nginx.conf
    windows下执行：  start nginx
+   
 3.配置
 
    修改登录密码， 修改文件/lua/password.lua
    --默认密码
    local defaultPassword = "admin"
+   
 4.其它
 
     管理端口为8000,进入管理界面: http://localhost:8000/
