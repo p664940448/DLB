@@ -15,11 +15,13 @@ openresty动态负载均衡
 2.运行
 
    linux下执行：nginx -c nginx.conf
+   
    windows下执行：  start nginx
    
 3.配置
 
    修改登录密码， 修改文件/lua/password.lua
+   
    --默认密码
    local defaultPassword = "admin"
    
