@@ -26,7 +26,7 @@ openresty动态负载均衡
    
 4.其它
 
-    管理端口为8000,进入管理界面: http://localhost:8000/
+    管理端口为8000,进入管理界面: http://localhost:8000/.登录密码默认admin.
     负载均衡对外端口为80，可修改nginx.conf来配置这个端口
     增加server或者删除server，负载均衡会自动生效。
     
