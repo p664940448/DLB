@@ -20,6 +20,7 @@ if ups ~=nil then
     local index = 0
     for k,v in ipairs(serverTable) do
     	if v.state=="on" and v.health=="Y" then
+            ngx.log(ngx.INFO,"===[",v.cweight)
 	        local map = v
 	        if map.cweight > maxWeight then
 	            maxWeight = map.cweight
