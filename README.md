@@ -11,7 +11,7 @@ openresty动态负载均衡
     复制html目录到openresty根目录下。
     复制lua目录到openresty根目录下。
     复制/conf/nginx.conf文件 /conf/proxy_new.json文件到 openresty根目录下的conf目录，覆盖nginx.conf文件。
-    <img src="02.png" style="width:400px;"/>
+   <img src="02.png" style="width:400px;"/>
    
 2.运行
 
