@@ -20,7 +20,6 @@ if ups ~=nil then
     local index = 0
     for k,v in ipairs(serverTable) do
     	if v.state=="on" and v.health=="Y" then
-            ngx.log(ngx.INFO,"===[",v.cweight)
 	        local map = v
 	        if map.cweight > maxWeight then
 	            maxWeight = map.cweight
@@ -29,8 +28,9 @@ if ups ~=nil then
 	        end
     	end
     end
-    serverTable[index].cweight = serverTable[index].cweight - total
 
+    serverTable[index].cweight = serverTable[index].cweight - total
+	ngx.log(ngx.INFO,"select===",selectServer)
     local upss_string = cjson.encode(serverTable)
     ngx.shared.dyn_ups_zone:set("myServers",upss_string)
 

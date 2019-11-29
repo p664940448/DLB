@@ -9,16 +9,16 @@ local defaultPassword = "admin"
 local resultMap = {}
 function _M.checkPassword(_password)
 	if defaultPassword == _password then
-		ngx.shared.dyn_ups_zone:set("loginState","YES")
+		ngx.shared.dyn_ups_zone:set("loginState","YES",60*60*4)
 		return true
 	else
-		ngx.shared.dyn_ups_zone:set("loginState","NO")
+		ngx.shared.dyn_ups_zone:delete("loginState")
 		return false
 	end
 end
 
 function _M.init()
-	ngx.shared.dyn_ups_zone:set("loginState","NO")
+	ngx.shared.dyn_ups_zone:delete("loginState")
 end
 
 function _M.checkLogin()
@@ -42,7 +42,7 @@ function _M.checkLogin2()
 end
 
 function _M.exit()
-	ngx.shared.dyn_ups_zone:set("loginState","NO")
+	ngx.shared.dyn_ups_zone:delete("loginState")
 end
 
 

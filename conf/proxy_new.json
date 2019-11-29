@@ -1,1 +1,1 @@
-[{"host":"127.0.0.1:8002","serverName":"server2","state":"on","weight":"20","health":"Y","cweight":0},{"host":"127.0.0.1:8003","serverName":"server3","state":"on","weight":"20","health":"Y","cweight":0},{"host":"127.0.0.1:8001","serverName":"server1","state":"on","weight":"10","cweight":0,"health":"Y"}]
+[{"host":"10.3.2.209:8280","serverName":"mcp_redis","state":"on","weight":"10","cweight":0,"health":"Y"},{"host":"192.168.168.95:8280","serverName":"mcp_single","state":"on","weight":"20","cweight":0,"health":"Y"}]

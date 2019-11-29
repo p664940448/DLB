@@ -79,12 +79,9 @@ local function checkServer(host,options)
 
 	ok, err = sock:connect(hostTable[1], hostTable[2])
 	if not ok then
-		errlog("host:",host,"down")
 		setServerState(host,"N")
 	else
-		errlog("host:",host,"up")
-		setServerState(host,"Y")
-		
+		setServerState(host,"Y")		
 	end
 	sock:close()
 
